@@ -168,6 +168,6 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest@v4
         with:
-          subject-path: 'wheels-*/*'
+          subject-path: 'dist/*'
       - name: List all files
         run:  find .
