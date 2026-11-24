@@ -19,13 +19,12 @@ permissions:
 
 jobs:
   build:
-    name: Build (${{ matrix.os }}-${{ matrix.target }})-${{ matrix.dist }})
-    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.os }}-${{ matrix.target }}-${{ matrix.dist }})
     strategy:
       matrix:
         include:
             - { os:  ubuntu-latest, target:  x86_64, dist:     linux, manylinux:          auto }
-            - { os:  ubuntu-latest, target:     x86, dist:     linux, manylinux:          auto }
+            - { os:   ubuntu-22.04, target:     x86, dist:     linux, manylinux:          auto }
             - { os:  ubuntu-latest, target: aarch64, dist:     linux, manylinux:          auto }
             - { os:  ubuntu-latest, target:   armv7, dist:     linux, manylinux:          auto }
             - { os:  ubuntu-latest, target:   s390x, dist:     linux, manylinux:          auto }
@@ -40,6 +39,7 @@ jobs:
             - { os: windows-11-arm, target: aarch64, dist:   windows, python_arch: arm64       }
             - { os: macos-15-intel, target:  x86_64, dist:     macos,                          }
             - { os:   macos-latest, target: aarch64, dist:     macos,                          }
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - name: Build wheels
