@@ -1,0 +1,62 @@
+name: Build Wheels and Sdist
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.os }}-${{ matrix.target }}-${{ matrix.dist }}
+    strategy:
+      matrix:
+        include:
+            - { os:  ubuntu-latest, target:  x86_64, dist:     linux, manylinux:          auto }
+            - { os:   ubuntu-22.04, target:     x86, dist:     linux, manylinux:          auto }
+            - { os:  ubuntu-latest, target: aarch64, dist:     linux, manylinux:          auto }
+            - { os:  ubuntu-latest, target:   armv7, dist:     linux, manylinux:          auto }
+            - { os:  ubuntu-latest, target:   s390x, dist:     linux, manylinux:          auto }
+            - { os:  ubuntu-latest, target: ppc64le, dist:     linux, manylinux:          auto }
+            - { os:  ubuntu-latest, target: riscv64, dist:     linux, manylinux:          auto }
+            - { os:  ubuntu-latest, target:  x86_64, dist: musllinux, manylinux: musllinux_1_2 }
+            - { os:  ubuntu-latest, target:     x86, dist: musllinux, manylinux: musllinux_1_2 }
+            - { os:  ubuntu-latest, target: aarch64, dist: musllinux, manylinux: musllinux_1_2 }
+            - { os:  ubuntu-latest, target:   armv7, dist: musllinux, manylinux: musllinux_1_2 }
+            - { os: windows-latest, target:  x86_64, dist:   windows, python_arch:         x64 }
+            - { os: windows-latest, target:     x86, dist:   windows, python_arch:         x86 }
+            - { os: windows-11-arm, target: aarch64, dist:   windows, python_arch:       arm64 }
+            - { os: macos-15-intel, target:  x86_64, dist:     macos,                          }
+            - { os:   macos-latest, target: aarch64, dist:     macos,                          }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --locked --out dist --compatibility pypi
+          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          manylinux: ${{ matrix.manylinux }}
+      - name: Upload wheels
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheels-${{ matrix.dist }}-${{ matrix.target }}
+          path: dist/
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist/
+      - name: Upload sdist
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheels-sdist
+          path: dist/

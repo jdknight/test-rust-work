@@ -1,6 +1,18 @@
 [package]
 name = "test-rust-work"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2024"
+description = "test test-rust-work"
+license = "BSD-2-Clause"
+repository = "https://github.com/jdknight/test-rust-work"
+
+include = [
+    "/benches/",
+    "/examples/",
+    "/src/",
+    "/tests/",
+    "/LICENSE",
+    "/README.md",
+]
 
 [dependencies]

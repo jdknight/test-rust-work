@@ -1,0 +1,22 @@
+name: Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint and Test
+    uses: ./.github/workflows/_lint-and-test.yml
+
+  build:
+    name: Build
+    needs: [checks]
+    uses: ./.github/workflows/_build.yml
+
